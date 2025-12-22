@@ -13,6 +13,8 @@ where r.subscribed_at between '2025-11-12'::timestamp and '2025-11-28'::timestam
 and r.periods = 'Annual'
 and r.class in ('Standard', 'Plus')
 and r.annual_discount = 40
+and coalesce(lower(r.company), '-') not like '%gift%'
+and r.company_id not in (24,30,2403)
 
 union all 
 
@@ -30,6 +32,8 @@ where r.subscribed_at between '2025-11-28'::timestamp and '2025-12-10'::timestam
 and r.periods = 'Annual'
 and r.class in ('Standard', 'Plus')
 and r.annual_discount = 50
+and coalesce(lower(r.company), '-') not like '%gift%'
+and r.company_id not in (24,30,2403)
 
 ),
 
@@ -39,6 +43,9 @@ rr.user_id, max(rr.subscribed_at) as previous_subscription
 from aze.dm_subscription_report rr 
 inner join black_friday bf on rr.user_id = bf.user_id
 and rr.subscribed_at < bf.subscribed_at
+where
+ coalesce(lower(rr.company), '-') not like '%gift%'
+and rr.company_id not in (24,30,2403)
 group by rr.user_id
 
 )
@@ -51,7 +58,6 @@ case when ps.previous_subscription is null then 'New user'
 	 end as customer_type 
 from black_friday bf
 left join prev_subs ps on bf.user_id =ps.user_id
-
 
 
 
