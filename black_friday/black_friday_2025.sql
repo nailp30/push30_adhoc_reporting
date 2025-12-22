@@ -1,3 +1,6 @@
+
+
+
 with black_friday as (
 select 
 r.user_id, 
@@ -5,7 +8,6 @@ r.email,
 r.sponsorship,
 r.class,
 r.subscribed_at, 
-r.plan_price,
 r.annual_discount
 
 from aze.dm_subscription_report r
@@ -15,6 +17,7 @@ and r.class in ('Standard', 'Plus')
 and r.annual_discount = 40
 and coalesce(lower(r.company), '-') not like '%gift%'
 and r.company_id not in (24,30,2403)
+and coalesce(r.promo_code, '-') <> 'PROMO50'
 
 union all 
 
@@ -24,16 +27,15 @@ r.email,
 r.sponsorship,
 r.class,
 r.subscribed_at, 
-r.plan_price,
-r.annual_discount
+50.00 as annual_discount
 
 from aze.dm_subscription_report r
-where r.subscribed_at between '2025-11-28'::timestamp and '2025-12-10'::timestamp
+where r.subscribed_at between '2025-11-26'::timestamp and '2025-12-10'::timestamp
 and r.periods = 'Annual'
 and r.class in ('Standard', 'Plus')
-and r.annual_discount = 50
 and coalesce(lower(r.company), '-') not like '%gift%'
 and r.company_id not in (24,30,2403)
+and r.promo_code = 'PROMO50'
 
 ),
 
@@ -58,7 +60,5 @@ case when ps.previous_subscription is null then 'New user'
 	 end as customer_type 
 from black_friday bf
 left join prev_subs ps on bf.user_id =ps.user_id
-
-
 
 
