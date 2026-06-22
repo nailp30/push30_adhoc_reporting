@@ -23,6 +23,10 @@ and status in (1,4)
 ),
 
 
+
+
+
+
 subscription_income as (
 select 
 sum(round(plan_price*63::numeric (10,2)/100.00,2)) as user_payment
@@ -37,8 +41,8 @@ select count(distinct user_id) as total_user from aze.dm_user_social_demographic
 )
 
 
-select a.company_count, b.subscriptions_with_jf, c.user_payment, e.active_users, f.total_user,
-round(b.subscriptions_with_jf::numeric(10,2)/f.total_user::numeric(10,2) *100,2) as activation_rate
+select a.company_count, b.subscriptions_with_jf, c.user_payment, e.active_users as current_active_users, f.total_user,
+round(e.active_users::numeric(10,2)/f.total_user::numeric(10,2) *100,2) as activation_rate
 from comp_count a, subscriptions_with_jf b, subscription_income c, active_users e, total_user f
 
 
